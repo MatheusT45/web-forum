@@ -14,13 +14,13 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 500 })
+  @Column({ length: 500, nullable: false })
   name: string;
 
-  @Column()
+  @Column({ nullable: false })
   password: string;
 
-  @Column()
+  @Column({ unique: true, nullable: false })
   cpf: string;
 
   @CreateDateColumn()

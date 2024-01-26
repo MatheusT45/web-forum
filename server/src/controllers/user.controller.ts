@@ -9,16 +9,15 @@ import {
 } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { User } from 'src/entities/user.entity';
-import { CreateUserDto } from 'src/dto/create-user.dto';
-import { UpdateUserDto } from 'src/dto/update-user.dto';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { CreateUserDto } from 'src/dto/user/create-user.dto';
+import { UpdateUserDto } from 'src/dto/user/update-user.dto';
 
 @Controller('users')
 export class UserController {
   constructor(private readonly service: UserService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto): User {
+  create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.service.create(createUserDto);
   }
 
@@ -27,21 +26,21 @@ export class UserController {
     return this.service.findAll();
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string): Promise<User> {
-  //   return this.service.findOne(+id);
-  // }
+  @Get(':id')
+  findOne(@Param('id') id: string): Promise<User> {
+    return this.service.findOne(+id);
+  }
 
   @Patch(':id')
   update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<UpdateResult> {
+  ): Promise<User> {
     return this.service.update(+id, updateUserDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<DeleteResult> {
+  remove(@Param('id') id: string): Promise<{ success: boolean }> {
     return this.service.remove(+id);
   }
 }

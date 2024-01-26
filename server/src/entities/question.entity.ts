@@ -7,8 +7,8 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { Exercise } from '../exercise/exercise.entity';
-import { Answer } from '../answer/answer.entity';
+import { Exercise } from './exercise.entity';
+import { Answer } from './answer.entity';
 
 @Entity()
 export class Question {
@@ -18,10 +18,10 @@ export class Question {
   @Column('text')
   description: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @ManyToOne(() => Exercise, (exercise) => exercise.questions)

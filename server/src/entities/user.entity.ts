@@ -6,8 +6,8 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { Exercise } from '../exercise/exercise.entity';
-import { Answer } from '../answer/answer.entity';
+import { Exercise } from './exercise.entity';
+import { Answer } from './answer.entity';
 
 @Entity()
 export class User {
@@ -23,10 +23,10 @@ export class User {
   @Column()
   cpf: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @OneToMany(() => Exercise, (exercise) => exercise.createdBy)

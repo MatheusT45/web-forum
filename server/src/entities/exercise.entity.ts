@@ -8,8 +8,8 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { User } from '../user/user.entity';
-import { Question } from '../question/question.entity';
+import { User } from './user.entity';
+import { Question } from './question.entity';
 
 @Entity()
 export class Exercise {
@@ -22,10 +22,10 @@ export class Exercise {
   @Column('text')
   description: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @DeleteDateColumn()

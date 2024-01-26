@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { Exercise } from './exercise.entity';
+import { Exercise } from '../entities/exercise.entity';
 
 export const ExerciseProvider = [
   {

@@ -19,16 +19,6 @@ export class UserService {
     private repository: Repository<User>,
   ) {}
 
-  async login(cpf: string, password: string): Promise<User> {
-    const user = await this.repository.findOne({ where: { cpf } });
-
-    if (user && (await bcrypt.compare(password, user.password))) {
-      return user;
-    }
-
-    return null;
-  }
-
   public findAll(query: PaginateQuery): Promise<Paginated<User>> {
     return paginate(query, this.repository, {
       sortableColumns: ['id', 'name', 'cpf'],
@@ -47,10 +37,6 @@ export class UserService {
     const hash = await bcrypt.hash(createUserDto.password, salt);
 
     return await this.repository.save({ ...createUserDto, password: hash });
-  }
-
-  async findOne(id: number): Promise<User> {
-    return await this.repository.findOne({ where: { id } });
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {

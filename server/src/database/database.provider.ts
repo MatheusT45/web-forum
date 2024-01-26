@@ -1,16 +1,16 @@
 import { DataSource } from 'typeorm';
 
-export const databaseProviders = [
+export const databaseProvider = [
   {
     provide: 'DATA_SOURCE',
     useFactory: async () => {
       const dataSource = new DataSource({
-        type: 'mysql',
-        host: 'localhost',
-        port: 3306,
-        username: 'root',
-        password: 'root',
-        database: 'test',
+        type: 'postgres',
+        host: 'db',
+        port: 5432,
+        username: 'postgres',
+        password: 'postgres',
+        database: 'forum',
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
         synchronize: true,
       });

@@ -35,10 +35,6 @@ export class QuestionService {
     return await this.repository.save(createQuestionDto);
   }
 
-  async findOne(id: number): Promise<Question> {
-    return await this.repository.findOne({ where: { id } });
-  }
-
   async update(
     id: number,
     updateQuestionDto: UpdateQuestionDto,

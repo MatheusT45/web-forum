@@ -27,11 +27,6 @@ export class ExerciseController {
     return this.service.findAll(query);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string): Promise<Exercise> {
-    return this.service.findOne(+id);
-  }
-
   @Patch(':id')
   update(
     @Param('id') id: string,

@@ -35,10 +35,6 @@ export class AnswerService {
     return await this.repository.save(createAnswerDto);
   }
 
-  async findOne(id: number): Promise<Answer> {
-    return await this.repository.findOne({ where: { id } });
-  }
-
   async update(id: number, updateAnswerDto: UpdateAnswerDto): Promise<Answer> {
     const { affected } = await this.repository.update(id, updateAnswerDto);
     if (affected > 0) {

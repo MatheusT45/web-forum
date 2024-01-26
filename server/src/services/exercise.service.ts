@@ -35,10 +35,6 @@ export class ExerciseService {
     return await this.repository.save(createExerciseDto);
   }
 
-  async findOne(id: number): Promise<Exercise> {
-    return await this.repository.findOne({ where: { id } });
-  }
-
   async update(
     id: number,
     updateExerciseDto: UpdateExerciseDto,

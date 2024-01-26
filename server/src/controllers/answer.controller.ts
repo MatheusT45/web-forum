@@ -27,11 +27,6 @@ export class AnswerController {
     return this.service.findAll(query);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string): Promise<Answer> {
-    return this.service.findOne(+id);
-  }
-
   @Patch(':id')
   update(
     @Param('id') id: string,

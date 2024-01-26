@@ -11,6 +11,7 @@ import { ExerciseService } from '../services/exercise.service';
 import { Exercise } from 'src/entities/exercise.entity';
 import { CreateExerciseDto } from 'src/dto/exercise/create-exercise.dto';
 import { UpdateExerciseDto } from 'src/dto/exercise/update-exercise.dto';
+import { Paginate, PaginateQuery, Paginated } from 'nestjs-paginate';
 
 @Controller('exercises')
 export class ExerciseController {
@@ -22,8 +23,8 @@ export class ExerciseController {
   }
 
   @Get()
-  findAll(): Promise<Exercise[]> {
-    return this.service.findAll();
+  findAll(@Paginate() query: PaginateQuery): Promise<Paginated<Exercise>> {
+    return this.service.findAll(query);
   }
 
   @Get(':id')

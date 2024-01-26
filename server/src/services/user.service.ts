@@ -4,6 +4,13 @@ import { User } from '../entities/user.entity';
 import { CreateUserDto } from 'src/dto/user/create-user.dto';
 import { UpdateUserDto } from 'src/dto/user/update-user.dto';
 import * as bcrypt from 'bcrypt';
+import {
+  FilterOperator,
+  FilterSuffix,
+  PaginateQuery,
+  Paginated,
+  paginate,
+} from 'nestjs-paginate';
 
 @Injectable()
 export class UserService {
@@ -22,8 +29,17 @@ export class UserService {
     return null;
   }
 
-  async findAll() {
-    return this.repository.find();
+  public findAll(query: PaginateQuery): Promise<Paginated<User>> {
+    return paginate(query, this.repository, {
+      sortableColumns: ['id', 'name', 'cpf'],
+      nullSort: 'last',
+      defaultSortBy: [['id', 'DESC']],
+      searchableColumns: ['name', 'cpf'],
+      select: ['id', 'name', 'cpf', 'createdAt', 'updatedAt'],
+      filterableColumns: {
+        name: [FilterOperator.EQ, FilterSuffix.NOT],
+      },
+    });
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {

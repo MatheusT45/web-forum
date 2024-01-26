@@ -3,6 +3,13 @@ import { Repository } from 'typeorm';
 import { Exercise } from '../entities/exercise.entity';
 import { CreateExerciseDto } from 'src/dto/exercise/create-exercise.dto';
 import { UpdateExerciseDto } from 'src/dto/exercise/update-exercise.dto';
+import {
+  FilterOperator,
+  FilterSuffix,
+  PaginateQuery,
+  Paginated,
+  paginate,
+} from 'nestjs-paginate';
 
 @Injectable()
 export class ExerciseService {
@@ -11,8 +18,17 @@ export class ExerciseService {
     private repository: Repository<Exercise>,
   ) {}
 
-  async findAll() {
-    return this.repository.find();
+  public findAll(query: PaginateQuery): Promise<Paginated<Exercise>> {
+    return paginate(query, this.repository, {
+      sortableColumns: ['id', 'name', 'description'],
+      nullSort: 'last',
+      defaultSortBy: [['id', 'DESC']],
+      searchableColumns: ['name', 'description'],
+      select: ['id', 'name', 'description', 'createdAt', 'updatedAt'],
+      filterableColumns: {
+        description: [FilterOperator.EQ, FilterSuffix.NOT],
+      },
+    });
   }
 
   async create(createExerciseDto: CreateExerciseDto): Promise<Exercise> {

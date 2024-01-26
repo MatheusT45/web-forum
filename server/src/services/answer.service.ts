@@ -3,6 +3,13 @@ import { Repository } from 'typeorm';
 import { Answer } from '../entities/answer.entity';
 import { CreateAnswerDto } from 'src/dto/answer/create-answer.dto';
 import { UpdateAnswerDto } from 'src/dto/answer/update-answer.dto';
+import {
+  FilterOperator,
+  FilterSuffix,
+  PaginateQuery,
+  Paginated,
+  paginate,
+} from 'nestjs-paginate';
 
 @Injectable()
 export class AnswerService {
@@ -11,8 +18,17 @@ export class AnswerService {
     private repository: Repository<Answer>,
   ) {}
 
-  async findAll() {
-    return this.repository.find();
+  public findAll(query: PaginateQuery): Promise<Paginated<Answer>> {
+    return paginate(query, this.repository, {
+      sortableColumns: ['id', 'description'],
+      nullSort: 'last',
+      defaultSortBy: [['id', 'DESC']],
+      searchableColumns: ['description'],
+      select: ['id', 'description', 'createdAt', 'updatedAt'],
+      filterableColumns: {
+        description: [FilterOperator.EQ, FilterSuffix.NOT],
+      },
+    });
   }
 
   async create(createAnswerDto: CreateAnswerDto): Promise<Answer> {

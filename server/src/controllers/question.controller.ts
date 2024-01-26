@@ -11,6 +11,7 @@ import { QuestionService } from '../services/question.service';
 import { Question } from 'src/entities/question.entity';
 import { CreateQuestionDto } from 'src/dto/question/create-question.dto';
 import { UpdateQuestionDto } from 'src/dto/question/update-question.dto';
+import { Paginate, PaginateQuery, Paginated } from 'nestjs-paginate';
 
 @Controller('questions')
 export class QuestionController {
@@ -22,8 +23,8 @@ export class QuestionController {
   }
 
   @Get()
-  findAll(): Promise<Question[]> {
-    return this.service.findAll();
+  findAll(@Paginate() query: PaginateQuery): Promise<Paginated<Question>> {
+    return this.service.findAll(query);
   }
 
   @Get(':id')

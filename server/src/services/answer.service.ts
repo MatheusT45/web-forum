@@ -63,8 +63,7 @@ export class AnswerService {
         throw new Error('Invalid question');
       }
 
-      answer.question = question;
-      answers.push(await this.answerRepository.save(answer));
+      answers.push(await this.answerRepository.save({ ...answer, question }));
     }
 
     return answers;
@@ -75,10 +74,20 @@ export class AnswerService {
     answerId: number,
     updateAnswerDto: UpdateAnswerDto,
   ): Promise<Answer> {
+    const question = await this.questionRepository.findOne({
+      where: { id: updateAnswerDto.questionId },
+      relations: ['exercise'],
+    });
+
+    if (question.exercise.id !== exerciseId) {
+      throw new Error('Invalid question');
+    }
+
     const { affected } = await this.answerRepository.update(
       answerId,
       updateAnswerDto,
     );
+
     if (affected > 0) {
       return this.answerRepository.findOne({ where: { id: answerId } });
     }

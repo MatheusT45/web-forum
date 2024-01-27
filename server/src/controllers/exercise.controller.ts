@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
 } from '@nestjs/common';
 import { ExerciseService } from '../services/exercise.service';
 import { Exercise } from 'src/entities/exercise.entity';
@@ -28,11 +29,19 @@ export class ExerciseController {
   }
 
   @Patch('questionario/:id')
-  update(
+  patch(
     @Param('id') id: string,
     @Body() updateExerciseDto: UpdateExerciseDto,
   ): Promise<Exercise> {
-    return this.service.update(+id, updateExerciseDto);
+    return this.service.patch(+id, updateExerciseDto);
+  }
+
+  @Put('questionario/:id')
+  put(
+    @Body() updateExerciseDto: CreateExerciseDto,
+    @Param('id') id?: string,
+  ): Promise<Exercise> {
+    return this.service.put(updateExerciseDto, +id);
   }
 
   @Delete('questionario/:id')

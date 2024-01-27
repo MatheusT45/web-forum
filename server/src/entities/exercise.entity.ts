@@ -30,8 +30,6 @@ export class Exercise {
   @ManyToOne(() => User, (user) => user.exercises)
   createdBy: User;
 
-  @OneToMany(() => Question, (question) => question.exercise, {
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(() => Question, (question) => question.exercise)
   questions: Question[];
 }

@@ -24,7 +24,9 @@ export class Question {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Exercise, (exercise) => exercise.questions)
+  @ManyToOne(() => Exercise, (exercise) => exercise.questions, {
+    onDelete: 'CASCADE',
+  })
   exercise: Exercise;
 
   @OneToMany(() => Answer, (answer) => answer.question)

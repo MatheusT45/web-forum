@@ -23,11 +23,19 @@ export class ExerciseService {
 
   public findAll(query: PaginateQuery): Promise<Paginated<Exercise>> {
     return paginate(query, this.exerciseRepository, {
+      relations: ['questions'],
       sortableColumns: ['id', 'name', 'description'],
       nullSort: 'last',
       defaultSortBy: [['id', 'DESC']],
       searchableColumns: ['name', 'description'],
-      select: ['id', 'name', 'description', 'createdAt', 'updatedAt'],
+      select: [
+        'id',
+        'name',
+        'questions.id',
+        'questions.description',
+        'description',
+        'createdAt',
+      ],
       filterableColumns: {
         description: [FilterOperator.EQ, FilterSuffix.NOT],
       },
@@ -35,42 +43,63 @@ export class ExerciseService {
   }
 
   async create(createExerciseDto: CreateExerciseDto): Promise<Exercise> {
-    const exercise = await this.exerciseRepository.save(createExerciseDto);
-    const createdQuestions: Question[] = [];
+    const exercise = this.exerciseRepository.create(createExerciseDto);
 
-    for (const question of createExerciseDto.questions) {
-      question.exercise = exercise;
-      createdQuestions.push(await this.questionRepository.save(question));
-    }
+    const createdQuestions = await this.questionRepository.save(
+      createExerciseDto.questions,
+    );
 
-    // Avoid circular reference
-    const response = {
-      ...exercise,
-      questions: createdQuestions.map(
-        (q) =>
-          ({
-            id: q.id,
-            description: q.description,
-          }) as Question,
-      ),
-    };
+    exercise.questions.push(...createdQuestions);
 
-    return response;
+    await this.exerciseRepository.save(exercise);
+
+    return await this.exerciseRepository.findOne({
+      where: { id: exercise.id },
+      relations: ['questions'],
+    });
   }
 
-  async update(
+  async patch(
     id: number,
     updateExerciseDto: UpdateExerciseDto,
   ): Promise<Exercise> {
+    const { questions } = updateExerciseDto;
+
+    const exerciseToUpdate = await this.exerciseRepository.findOne({
+      where: { id },
+      relations: ['questions'],
+    });
+
+    const createdQuestions = await this.questionRepository.save(questions);
+
+    exerciseToUpdate.questions.push(...createdQuestions);
+    await this.exerciseRepository.save(exerciseToUpdate);
+
+    return await this.exerciseRepository.findOne({
+      where: { id },
+      relations: ['questions'],
+    });
+  }
+
+  async put(
+    updateExerciseDto: CreateExerciseDto,
+    id?: number,
+  ): Promise<Exercise> {
     const { questions, ...exercise } = updateExerciseDto;
 
-    if (questions) {
-    }
+    const exerciseToUpdate = this.exerciseRepository.create({
+      id,
+      ...exercise,
+    });
 
-    const { affected } = await this.exerciseRepository.update(id, exercise);
-    if (affected > 0) {
-      return this.exerciseRepository.findOne({ where: { id } });
-    }
+    exerciseToUpdate.questions = await this.questionRepository.save(questions);
+
+    await this.exerciseRepository.save(exerciseToUpdate);
+
+    return await this.exerciseRepository.findOne({
+      where: { id },
+      relations: ['questions'],
+    });
   }
 
   async remove(id: number): Promise<{ success: boolean }> {

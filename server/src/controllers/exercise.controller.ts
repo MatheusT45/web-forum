@@ -13,21 +13,21 @@ import { CreateExerciseDto } from 'src/dto/exercise/create-exercise.dto';
 import { UpdateExerciseDto } from 'src/dto/exercise/update-exercise.dto';
 import { Paginate, PaginateQuery, Paginated } from 'nestjs-paginate';
 
-@Controller('exercises')
+@Controller()
 export class ExerciseController {
   constructor(private readonly service: ExerciseService) {}
 
-  @Post()
-  create(@Body() createExerciseDto: CreateExerciseDto): Promise<Exercise> {
-    return this.service.create(createExerciseDto);
-  }
-
-  @Get()
+  @Get('questionarios')
   findAll(@Paginate() query: PaginateQuery): Promise<Paginated<Exercise>> {
     return this.service.findAll(query);
   }
 
-  @Patch(':id')
+  @Post('questionario')
+  create(@Body() createExerciseDto: CreateExerciseDto): Promise<Exercise> {
+    return this.service.create(createExerciseDto);
+  }
+
+  @Patch('questionario/:id')
   update(
     @Param('id') id: string,
     @Body() updateExerciseDto: UpdateExerciseDto,
@@ -35,7 +35,7 @@ export class ExerciseController {
     return this.service.update(+id, updateExerciseDto);
   }
 
-  @Delete(':id')
+  @Delete('questionario/:id')
   remove(@Param('id') id: string): Promise<{ success: boolean }> {
     return this.service.remove(+id);
   }

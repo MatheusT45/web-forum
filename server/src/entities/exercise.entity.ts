@@ -4,7 +4,6 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  DeleteDateColumn,
   ManyToOne,
   OneToMany,
 } from 'typeorm';
@@ -28,12 +27,11 @@ export class Exercise {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @DeleteDateColumn()
-  deletedAt?: Date;
-
   @ManyToOne(() => User, (user) => user.exercises)
   createdBy: User;
 
-  @OneToMany(() => Question, (question) => question.exercise)
+  @OneToMany(() => Question, (question) => question.exercise, {
+    onDelete: 'CASCADE',
+  })
   questions: Question[];
 }

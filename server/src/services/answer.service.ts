@@ -10,40 +10,85 @@ import {
   Paginated,
   paginate,
 } from 'nestjs-paginate';
+import { Question } from 'src/entities/question.entity';
+import { Exercise } from 'src/entities/exercise.entity';
 
 @Injectable()
 export class AnswerService {
   constructor(
     @Inject('ANSWER_REPOSITORY')
-    private repository: Repository<Answer>,
+    private answerRepository: Repository<Answer>,
+    @Inject('QUESTION_REPOSITORY')
+    private questionRepository: Repository<Question>,
+    @Inject('EXERCISE_REPOSITORY')
+    private exerciseRepository: Repository<Exercise>,
   ) {}
 
-  public findAll(query: PaginateQuery): Promise<Paginated<Answer>> {
-    return paginate(query, this.repository, {
+  public findAll(
+    exerciseId: number,
+    query: PaginateQuery,
+  ): Promise<Paginated<Answer>> {
+    return paginate(query, this.answerRepository, {
+      relations: ['question'],
       sortableColumns: ['id', 'description'],
       nullSort: 'last',
       defaultSortBy: [['id', 'DESC']],
       searchableColumns: ['description'],
-      select: ['id', 'description', 'createdAt', 'updatedAt'],
+      select: [
+        'id',
+        'description',
+        'createdAt',
+        'question.id',
+        'question.description',
+      ],
       filterableColumns: {
         description: [FilterOperator.EQ, FilterSuffix.NOT],
       },
+      where: { question: { exercise: { id: exerciseId } } },
     });
   }
 
-  async create(createAnswerDto: CreateAnswerDto): Promise<Answer> {
-    return await this.repository.save(createAnswerDto);
+  async create(
+    exerciseId: number,
+    createAnswerDto: CreateAnswerDto[],
+  ): Promise<Answer[]> {
+    const answers = [];
+    for (const answer of createAnswerDto) {
+      const question = await this.questionRepository.findOne({
+        where: { id: answer.questionId },
+        relations: ['exercise'],
+      });
+
+      if (question.exercise.id !== exerciseId) {
+        throw new Error('Invalid question');
+      }
+
+      answer.question = question;
+      answers.push(await this.answerRepository.save(answer));
+    }
+
+    return answers;
   }
 
-  async update(id: number, updateAnswerDto: UpdateAnswerDto): Promise<Answer> {
-    const { affected } = await this.repository.update(id, updateAnswerDto);
+  async update(
+    exerciseId: number,
+    answerId: number,
+    updateAnswerDto: UpdateAnswerDto,
+  ): Promise<Answer> {
+    const { affected } = await this.answerRepository.update(
+      answerId,
+      updateAnswerDto,
+    );
     if (affected > 0) {
-      return this.repository.findOne({ where: { id } });
+      return this.answerRepository.findOne({ where: { id: answerId } });
     }
   }
 
-  async remove(id: number): Promise<{ success: boolean }> {
-    const { affected } = await this.repository.delete(id);
+  async remove(
+    exerciseId: number,
+    answerId: number,
+  ): Promise<{ success: boolean }> {
+    const { affected } = await this.answerRepository.delete(answerId);
     return {
       success: affected > 0,
     };

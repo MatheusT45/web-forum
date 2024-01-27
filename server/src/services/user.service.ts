@@ -39,11 +39,17 @@ export class UserService {
     return await this.repository.save({ ...createUserDto, password: hash });
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+  async patch(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const { affected } = await this.repository.update(id, updateUserDto);
     if (affected > 0) {
       return this.repository.findOne({ where: { id } });
     }
+  }
+
+  async put(updateUserDto: CreateUserDto, id?: number): Promise<User> {
+    this.repository.create({ ...updateUserDto, id });
+
+    return await this.repository.save({ ...updateUserDto, id });
   }
 
   async remove(id: number): Promise<{ success: boolean }> {

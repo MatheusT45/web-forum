@@ -29,7 +29,7 @@ export class ExerciseController {
   }
 
   @Patch('questionario/:id')
-  patch(
+  updatePatch(
     @Param('id') id: string,
     @Body() updateExerciseDto: UpdateExerciseDto,
   ): Promise<Exercise> {
@@ -37,7 +37,7 @@ export class ExerciseController {
   }
 
   @Put('questionario/:id')
-  put(
+  updatePut(
     @Body() updateExerciseDto: CreateExerciseDto,
     @Param('id') id?: string,
   ): Promise<Exercise> {

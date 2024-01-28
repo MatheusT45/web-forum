@@ -29,7 +29,7 @@ export class AnswerService {
     query: PaginateQuery,
   ): Promise<Paginated<Answer>> {
     return paginate(query, this.answerRepository, {
-      relations: ['question'],
+      relations: ['question', 'user'],
       sortableColumns: ['id', 'description'],
       nullSort: 'last',
       defaultSortBy: [['id', 'DESC']],
@@ -40,6 +40,9 @@ export class AnswerService {
         'createdAt',
         'question.id',
         'question.description',
+        'user.id',
+        'user.name',
+        'user.cpf',
       ],
       filterableColumns: {
         description: [FilterOperator.EQ, FilterSuffix.NOT],

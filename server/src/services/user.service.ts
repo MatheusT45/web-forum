@@ -44,6 +44,7 @@ export class UserService {
     if (affected > 0) {
       return this.repository.findOne({ where: { id } });
     }
+    throw new Error('Usuário não encontrado');
   }
 
   async put(updateUserDto: CreateUserDto, id?: number): Promise<User> {

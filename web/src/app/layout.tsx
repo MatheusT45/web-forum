@@ -12,8 +12,8 @@ import ChatIcon from '@mui/icons-material/Chat';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Web Forum',
-  description: 'Web forum app developed with Next.js',
+  title: 'Web Quiz',
+  description: 'Web Quiz app developed with Next.js',
 };
 
 export default function RootLayout({
@@ -29,7 +29,7 @@ export default function RootLayout({
             <Toolbar sx={{ bgcolor: '#283593' }}>
               <ChatIcon sx={{ marginRight: '8px' }} />
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                Forum
+                Quiz
               </Typography>
               <Button color="inherit">Login</Button>
             </Toolbar>

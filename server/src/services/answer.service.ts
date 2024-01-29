@@ -11,7 +11,6 @@ import {
   paginate,
 } from 'nestjs-paginate';
 import { Question } from 'src/entities/question.entity';
-import { Exercise } from 'src/entities/exercise.entity';
 
 @Injectable()
 export class AnswerService {
@@ -20,8 +19,6 @@ export class AnswerService {
     private answerRepository: Repository<Answer>,
     @Inject('QUESTION_REPOSITORY')
     private questionRepository: Repository<Question>,
-    @Inject('EXERCISE_REPOSITORY')
-    private exerciseRepository: Repository<Exercise>,
   ) {}
 
   public findAll(

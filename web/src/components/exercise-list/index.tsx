@@ -12,7 +12,10 @@ import {
 } from '@mui/x-data-grid';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import { getExercises } from '@/services/exercise.service';
+import {
+  deleteExerciseRequest,
+  getExercises,
+} from '@/services/exercise.service';
 import { useRouter } from 'next/navigation';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -58,11 +61,12 @@ export default function ExerciseListComponent() {
   ];
 
   const editExercise = (id: GridRowId) => () => {
-    console.log(id);
+    console.log('edit: ', id);
   };
 
-  const deleteExercise = (id: GridRowId) => () => {
-    console.log(id);
+  const deleteExercise = (id: GridRowId) => async () => {
+    await deleteExerciseRequest(id.toString());
+    await getPaginatedExercises();
   };
 
   const { push } = useRouter();

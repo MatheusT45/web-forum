@@ -29,3 +29,13 @@ export const createExercise = async (exerciseFormData: FormData) => {
 
   return createdExercise;
 };
+
+export const deleteExerciseRequest = async (id: string) => {
+  const response = await fetch(`http://localhost:3000/questionario/${id}`, {
+    method: 'DELETE',
+  });
+
+  const deletedExercise = await response.json();
+
+  return deletedExercise;
+};

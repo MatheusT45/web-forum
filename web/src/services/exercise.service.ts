@@ -8,7 +8,7 @@ export const getExercises = async () => {
   const response = await fetch('http://localhost:3000/questionarios');
   const exercises = await response.json();
 
-  return exercises;
+  return exercises.data;
 };
 
 export const createExercise = async (exerciseFormData: FormData) => {

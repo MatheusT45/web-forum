@@ -18,8 +18,10 @@ import FormControl from '@mui/material/FormControl';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { FormEvent, useState } from 'react';
 import { createExercise } from '@/services/exercise.service';
+import { useRouter } from 'next/navigation';
 
 export default function ExerciseFormComponent() {
+  const { push } = useRouter();
   const [questionCount, setQuestionCount] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -46,15 +48,20 @@ export default function ExerciseFormComponent() {
           questionDescriptions.map((description) => ({ description }))
         )
       );
-      formData.append('createdBy', '1');
+      formData.append('createdBy', '1'); // TODO: ADD CPF AS A PARAMETER
 
       await createExercise(formData);
     } catch (error) {
       console.error(error);
     } finally {
       setIsLoading(false);
+      push('/');
     }
   }
+
+  const handleClickCancel = () => {
+    push('/');
+  };
 
   return (
     <Box sx={{ flexGrow: 1, margin: '3rem' }}>
@@ -125,7 +132,7 @@ export default function ExerciseFormComponent() {
             <Button variant="contained" type="submit">
               Salvar
             </Button>
-            <Button>Cancelar</Button>
+            <Button onClick={handleClickCancel}>Cancelar</Button>
           </CardActions>
         </form>
       </Card>

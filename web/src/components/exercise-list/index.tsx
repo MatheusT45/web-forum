@@ -22,15 +22,22 @@ import EditIcon from '@mui/icons-material/Edit';
 
 export default function ExerciseListComponent() {
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', flex: 1, minWidth: 20 },
-    { field: 'name', headerName: 'Nome', flex: 1, minWidth: 100 },
+    { field: 'id', headerName: 'ID', flex: 1, minWidth: 40, maxWidth: 40 },
+    {
+      field: 'name',
+      headerName: 'Nome',
+      flex: 1,
+      minWidth: 200,
+      maxWidth: 200,
+    },
     { field: 'description', headerName: 'Descrição', flex: 1, minWidth: 400 },
     {
       field: 'questionsLength',
       headerName: 'Qtd. Questões',
       type: 'number',
       flex: 1,
-      minWidth: 20,
+      minWidth: 120,
+      maxWidth: 120,
     },
     {
       field: 'createdAt',
@@ -38,6 +45,7 @@ export default function ExerciseListComponent() {
       type: 'dateTime',
       flex: 1,
       minWidth: 200,
+      maxWidth: 200,
     },
     {
       field: 'actions',

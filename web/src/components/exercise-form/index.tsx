@@ -68,7 +68,9 @@ export default function ExerciseFormComponent() {
       <Card sx={{ minWidth: 275 }}>
         <form onSubmit={onSubmit}>
           <CardContent>
-            <Typography color="text.secondary">Novo Questionário</Typography>
+            <Typography variant="h5" component="div" color="text.secondary">
+              Novo Questionário
+            </Typography>
             <Divider />
             <Container
               sx={{

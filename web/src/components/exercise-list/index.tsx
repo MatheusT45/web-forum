@@ -4,40 +4,75 @@ import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridColDef,
+  GridRowId,
+} from '@mui/x-data-grid';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { getExercises } from '@/services/exercise.service';
 import { useRouter } from 'next/navigation';
-
-const columns: GridColDef[] = [
-  { field: 'id', headerName: 'ID', flex: 1, minWidth: 20 },
-  { field: 'name', headerName: 'Nome', flex: 1, minWidth: 100 },
-  { field: 'description', headerName: 'Descrição', flex: 1, minWidth: 400 },
-  {
-    field: 'questionsLength',
-    headerName: 'Qtd. Questões',
-    type: 'number',
-    flex: 1,
-    minWidth: 20,
-  },
-  {
-    field: 'createdAt',
-    headerName: 'Criado em',
-    type: 'dateTime',
-    flex: 1,
-    minWidth: 200,
-  },
-];
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
 export default function ExerciseListComponent() {
+  const columns: GridColDef[] = [
+    { field: 'id', headerName: 'ID', flex: 1, minWidth: 20 },
+    { field: 'name', headerName: 'Nome', flex: 1, minWidth: 100 },
+    { field: 'description', headerName: 'Descrição', flex: 1, minWidth: 400 },
+    {
+      field: 'questionsLength',
+      headerName: 'Qtd. Questões',
+      type: 'number',
+      flex: 1,
+      minWidth: 20,
+    },
+    {
+      field: 'createdAt',
+      headerName: 'Criado em',
+      type: 'dateTime',
+      flex: 1,
+      minWidth: 200,
+    },
+    {
+      field: 'actions',
+      type: 'actions',
+      width: 80,
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<EditIcon />}
+          label="Duplicate User"
+          onClick={editExercise(params.id)}
+          key={params.id}
+        />,
+        <GridActionsCellItem
+          icon={<DeleteIcon />}
+          label="Delete"
+          onClick={deleteExercise(params.id)}
+          key={params.id}
+        />,
+      ],
+    },
+  ];
+
+  const editExercise = (id: GridRowId) => () => {
+    console.log(id);
+  };
+
+  const deleteExercise = (id: GridRowId) => () => {
+    console.log(id);
+  };
+
   const { push } = useRouter();
   const [exercises, setExercises] = useState([]);
 
   const getPaginatedExercises = async () => {
     const paginatedExercises = await getExercises();
+
+    // TODO: REMOVE ANY
     paginatedExercises.map((exercise: any) => {
-      // TODO: REMOVE ANY
       exercise.questionsLength = exercise.questions.length;
       exercise.createdAt = new Date(exercise.createdAt);
       return exercise;
@@ -49,7 +84,6 @@ export default function ExerciseListComponent() {
   }, []);
 
   function handleCreateExerciseRedirect() {
-    console.log('exercises', exercises);
     push('/create-exercise');
   }
 
@@ -65,7 +99,7 @@ export default function ExerciseListComponent() {
             }}
           >
             <Typography variant="h5" component="div" color="text.secondary">
-              Exercise List
+              Questionários
             </Typography>
 
             <Button variant="contained" onClick={handleCreateExerciseRedirect}>

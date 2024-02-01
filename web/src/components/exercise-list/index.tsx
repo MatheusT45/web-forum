@@ -20,6 +20,8 @@ import { useRouter } from 'next/navigation';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AddCommentIcon from '@mui/icons-material/AddComment';
+import { ExerciseDto } from '@/dtos/exercise.dto';
+import { ExerciseModel } from '@/models/exercise.model';
 
 export default function ExerciseListComponent() {
   const columns: GridColDef[] = [
@@ -91,18 +93,20 @@ export default function ExerciseListComponent() {
   };
 
   const { push } = useRouter();
-  const [exercises, setExercises] = useState([]);
+  const [exercises, setExercises] = useState<ExerciseModel[]>([]);
 
   const getPaginatedExercises = async () => {
     const paginatedExercises = await getExercises();
 
-    // TODO: REMOVE ANY
-    paginatedExercises.map((exercise: any) => {
-      exercise.questionsLength = exercise.questions.length;
-      exercise.createdAt = new Date(exercise.createdAt);
-      return exercise;
+    const fixedExercises: ExerciseModel[] = [];
+    paginatedExercises.forEach((exercise: ExerciseDto, i: number) => {
+      fixedExercises[i] = {
+        ...exercise,
+        questionsLength: exercise.questions.length,
+        createdAt: new Date(exercise.createdAt),
+      };
     });
-    setExercises(paginatedExercises);
+    setExercises(fixedExercises);
   };
 
   useEffect(() => {

@@ -13,11 +13,14 @@ import { useEffect, useState } from 'react';
 import {
   answerExercise,
   getExercise,
-  getExerciseAnswer,
+  getExerciseAnswers,
 } from '@/services/exercise.service';
 import { useRouter } from 'next/navigation';
-import { useForm, Controller, set } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import Snackbar from '@mui/material/Snackbar';
+import { ExerciseDto } from '@/dtos/exercise.dto';
+import { AnswerDto } from '@/dtos/answer.dto';
+import { QuestionDto } from '@/dtos/question.dto';
 
 export default function ExerciseAnswerFormComponent({
   exerciseId,
@@ -31,8 +34,8 @@ export default function ExerciseAnswerFormComponent({
     formState: { errors },
   } = useForm();
   const { push } = useRouter();
-  const [exercise, setExercise] = useState({} as any); // TODO: ADD TYPE TO EXERCISE
-  const [answers, setAnswers] = useState([] as any); // TODO: ADD TYPE TO ANSWER
+  const [exercise, setExercise] = useState<ExerciseDto>({} as ExerciseDto);
+  const [answers, setAnswers] = useState<AnswerDto[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [previouslyAnswered, setPreviouslyAnswered] = useState(false);
@@ -40,15 +43,22 @@ export default function ExerciseAnswerFormComponent({
   const fetchExercise = async () => {
     if (!exerciseId) return;
     const exerciseResponse = await getExercise(+exerciseId);
-    const answerResponse = await getExerciseAnswer(+exerciseId, 1); // TODO: ADD CPF AS A PARAMETER
+    const answerResponse = await getExerciseAnswers(+exerciseId, 1); // TODO: ADD CPF AS A PARAMETER
 
     if (answerResponse.length > 0) {
       setOpenSnackbar(true);
       setPreviouslyAnswered(true);
+
+      setExercise(exerciseResponse);
+      setAnswers(answerResponse);
+
+      return;
     }
+
     console.log(answerResponse);
+
     setExercise(exerciseResponse);
-    setAnswers(answerResponse);
+    setAnswers(exerciseResponse.questions.map(() => ({} as AnswerDto)));
   };
 
   useEffect(() => {
@@ -66,7 +76,7 @@ export default function ExerciseAnswerFormComponent({
 
     await answerExercise(
       +exerciseId,
-      data.answers.filter((answer: any) => answer)
+      data.answers.filter((answer: AnswerDto) => answer)
     );
 
     setIsLoading(false);
@@ -106,7 +116,7 @@ export default function ExerciseAnswerFormComponent({
               }}
             >
               <Typography component="h2">{exercise.description}</Typography>
-              {exercise.questions?.map((question: any, i: number) => {
+              {exercise.questions?.map((question: QuestionDto, i: number) => {
                 return (
                   <div key={question.id}>
                     <Typography component="h3">
@@ -129,13 +139,18 @@ export default function ExerciseAnswerFormComponent({
                           onChange={(
                             event: React.ChangeEvent<HTMLInputElement>
                           ) => {
-                            setAnswers([
-                              ...answers,
-                              {
-                                description: event.target.value,
-                                questionId: question.id,
-                              },
-                            ]);
+                            setAnswers(
+                              answers.map((answer, index: number) => {
+                                if (index === i) {
+                                  return {
+                                    ...answer,
+                                    description: event.target.value,
+                                    questionId: question.id,
+                                  };
+                                }
+                                return answer;
+                              })
+                            );
                             setValue(`answers-${question.id}`, {
                               description: event.target.value,
                               questionId: question.id,

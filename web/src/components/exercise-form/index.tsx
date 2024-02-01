@@ -16,34 +16,40 @@ import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { FormEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   createExercise,
   getExercise,
   updateExercise,
 } from '@/services/exercise.service';
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { ExerciseDto } from '@/dtos/exercise.dto';
 
 export default function ExerciseFormComponent({
   exerciseId,
 }: {
   exerciseId?: string;
 }) {
+  const { register, handleSubmit } = useForm();
   const { push } = useRouter();
-  const [exercise, setExercise] = useState({
+  const [exercise, setExercise] = useState<ExerciseDto>({
+    name: '',
+    description: '',
     questions: [
       {
         description: '',
       },
     ],
-  } as any); // TODO: ADD TYPE TO EXERCISE
+    createdAt: new Date().toString(),
+  });
   const [questionCount, setQuestionCount] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchExercise = async () => {
     if (!exerciseId) return;
     const response = await getExercise(+exerciseId);
-    setExercise(response);
+    setExercise({ ...response, createdAt: response.createdAt });
     setQuestionCount(response.questions.length);
   };
 
@@ -74,35 +80,29 @@ export default function ExerciseFormComponent({
     setQuestionCount(questionCount - 1);
   };
 
-  async function onSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  const onSubmit = handleSubmit(async () => {
     setIsLoading(true);
-
     try {
-      const formData = new FormData(event.currentTarget);
-      const questionDescriptions = formData.getAll('question.description');
-
-      formData.delete('question.description');
-      formData.append(
-        'questions',
-        JSON.stringify(
-          questionDescriptions.map((description) => ({ description }))
-        )
-      );
-      formData.append('createdBy', '1'); // TODO: ADD CPF AS A PARAMETER
-
       if (exerciseId) {
-        await updateExercise(exerciseId, formData);
+        // remove ids from questions to always create new ones
+        exercise.questions.map((question) => {
+          if (question.id) {
+            delete question.id;
+            return question;
+          }
+          return question;
+        });
+        await updateExercise(exerciseId, exercise);
         return;
       }
-      await createExercise(formData);
+      await createExercise(exercise);
     } catch (error) {
       console.error(error);
     } finally {
       setIsLoading(false);
       push('/');
     }
-  }
+  });
 
   const handleClickCancel = () => {
     push('/');
@@ -129,7 +129,7 @@ export default function ExerciseFormComponent({
                 required
                 id="exercise-name-input"
                 label="Nome"
-                name="name"
+                {...register('name')}
                 value={exercise.name || ''}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setExercise({ ...exercise, name: event.target.value });
@@ -139,7 +139,7 @@ export default function ExerciseFormComponent({
               <TextField
                 id="exercise-description-input"
                 label="Descrição"
-                name="description"
+                {...register('description')}
                 maxRows={4}
                 value={exercise.description || ''}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -165,20 +165,17 @@ export default function ExerciseFormComponent({
                   <OutlinedInput
                     id="question-description-input"
                     label="Descrição"
-                    name="question.description"
                     value={exercise.questions?.[i]?.description || ''}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       setExercise({
                         ...exercise,
                         questions: exercise.questions.map(
-                          (
-                            question: { description: string },
-                            index: number
-                          ) => {
+                          (question, index: number) => {
                             if (index === i) {
                               return {
                                 ...question,
                                 description: event.target.value,
+                                id: question.id || undefined,
                               };
                             }
                             return question;

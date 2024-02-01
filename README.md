@@ -8,6 +8,8 @@ docker compose up
 
 <!-- TODO: TRATAMENTO DE ERROS -->
 <!-- TODO: VALIDACAO DE CPF -->
+<!-- TODO: SERVER SIDE PAGINATION -->
+<!-- TODO: FIXTURES PARA POPULAR BASE DE DADOS DAS QUESTOES -->
 
 ## Próximos passos
 

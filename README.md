@@ -24,10 +24,10 @@ Documentação da API: `http://localhost:3000/api`
 
 ## Próximos passos
 
-- Adicionar um WYSIWYG para o campo de enunciado das perguntas
-- Adicionar autenticação (JWT)
-- Server-side Pagination
-- Fixtures para popular a base de dados
-- Validações de CPF
-- Tratamento de erros da API
-- Integrar com o GCP
+- Adicionar um WYSIWYG para os campos de descrição das perguntas e respostas;
+- Adicionar autenticação (JWT);
+- Server-side Pagination;
+- Fixtures para popular a base de dados;
+- Validações de CPF;
+- Tratamento de erros da API;
+- Integrar com o GCP.

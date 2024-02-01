@@ -10,9 +10,14 @@ import TextField from '@mui/material/TextField';
 import Divider from '@mui/material/Divider';
 import Container from '@mui/material/Container';
 import { useEffect, useState } from 'react';
-import { getExercise } from '@/services/exercise.service';
+import {
+  answerExercise,
+  getExercise,
+  getExerciseAnswer,
+} from '@/services/exercise.service';
 import { useRouter } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, set } from 'react-hook-form';
+import Snackbar from '@mui/material/Snackbar';
 
 export default function ExerciseAnswerFormComponent({
   exerciseId,
@@ -27,19 +32,30 @@ export default function ExerciseAnswerFormComponent({
   } = useForm();
   const { push } = useRouter();
   const [exercise, setExercise] = useState({} as any); // TODO: ADD TYPE TO EXERCISE
+  const [answers, setAnswers] = useState([] as any); // TODO: ADD TYPE TO ANSWER
   const [isLoading, setIsLoading] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [previouslyAnswered, setPreviouslyAnswered] = useState(false);
 
   const fetchExercise = async () => {
     if (!exerciseId) return;
-    const response = await getExercise(+exerciseId);
-    setExercise(response);
+    const exerciseResponse = await getExercise(+exerciseId);
+    const answerResponse = await getExerciseAnswer(+exerciseId, 1); // TODO: ADD CPF AS A PARAMETER
+
+    if (answerResponse.length > 0) {
+      setOpenSnackbar(true);
+      setPreviouslyAnswered(true);
+    }
+    console.log(answerResponse);
+    setExercise(exerciseResponse);
+    setAnswers(answerResponse);
   };
 
   useEffect(() => {
     fetchExercise();
   }, []);
 
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit(async (data) => {
     setIsLoading(true);
     data.answers = Object.keys(data).map((key) => {
       if (!data[key]) return;
@@ -48,36 +64,28 @@ export default function ExerciseAnswerFormComponent({
       return data[key];
     });
 
-    console.log(data.answers.filter((answer: any) => answer));
-    // await answerExercise(exerciseId, formData);
+    await answerExercise(
+      +exerciseId,
+      data.answers.filter((answer: any) => answer)
+    );
 
     setIsLoading(false);
-    // push('/');
+    push('/');
   });
-
-  // async function onSubmit(event: FormEvent<HTMLFormElement>) {
-  //   event.preventDefault();
-  //   setIsLoading(true);
-
-  //   try {
-  //     const formData = new FormData(event.currentTarget);
-
-  //     formData.append('createdBy', '1'); // TODO: ADD CPF AS A PARAMETER
-
-  //     formData.append('description', '1');
-
-  //     console.log('formData', formData);
-  //     console.log('answers', answers);
-  //   } catch (error) {
-  //     console.error(error);
-  //   } finally {
-  //     setIsLoading(false);
-  //     // push('/');
-  //   }
-  // }
 
   const handleClickCancel = () => {
     push('/');
+  };
+
+  const handleCloseSnackbar = (
+    event: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenSnackbar(false);
   };
 
   return (
@@ -102,20 +110,32 @@ export default function ExerciseAnswerFormComponent({
                 return (
                   <div key={question.id}>
                     <Typography component="h3">
+                      {i + 1 + '. '}
                       {question.description}
                     </Typography>
                     <Controller
                       name={`answer-${question.id}`}
                       control={control}
-                      render={({ field }) => (
+                      render={() => (
                         <TextField
                           id={`answer-input-${question.id}`}
-                          label="Resposta"
+                          label="Sua Resposta"
                           variant="filled"
                           fullWidth
+                          value={answers[i].description || ''}
+                          InputProps={{
+                            readOnly: previouslyAnswered,
+                          }}
                           onChange={(
                             event: React.ChangeEvent<HTMLInputElement>
                           ) => {
+                            setAnswers([
+                              ...answers,
+                              {
+                                description: event.target.value,
+                                questionId: question.id,
+                              },
+                            ]);
                             setValue(`answers-${question.id}`, {
                               description: event.target.value,
                               questionId: question.id,
@@ -130,13 +150,23 @@ export default function ExerciseAnswerFormComponent({
             </Container>
           </CardContent>
           <CardActions>
-            <Button variant="contained" type="submit">
+            <Button
+              variant="contained"
+              type="submit"
+              disabled={previouslyAnswered}
+            >
               Responder
             </Button>
             <Button onClick={handleClickCancel}>Cancelar</Button>
           </CardActions>
         </form>
       </Card>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        message="Questionário já respondido!"
+      />
     </Box>
   );
 }

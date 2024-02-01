@@ -19,6 +19,7 @@ import {
 import { useRouter } from 'next/navigation';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import AddCommentIcon from '@mui/icons-material/AddComment';
 
 export default function ExerciseListComponent() {
   const columns: GridColDef[] = [
@@ -53,20 +54,32 @@ export default function ExerciseListComponent() {
       width: 80,
       getActions: (params) => [
         <GridActionsCellItem
+          icon={<AddCommentIcon />}
+          label="Answer"
+          onClick={answerExercise(params.id)}
+          key={params.id}
+        />,
+        <GridActionsCellItem
           icon={<EditIcon />}
-          label="Duplicate User"
+          label="Edit"
           onClick={editExercise(params.id)}
           key={params.id}
+          showInMenu
         />,
         <GridActionsCellItem
           icon={<DeleteIcon />}
           label="Delete"
           onClick={deleteExercise(params.id)}
           key={params.id}
+          showInMenu
         />,
       ],
     },
   ];
+
+  const answerExercise = (id: GridRowId) => () => {
+    push(`/answer-exercise/${id}`);
+  };
 
   const editExercise = (id: GridRowId) => () => {
     push(`/edit-exercise/${id}`);

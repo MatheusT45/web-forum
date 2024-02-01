@@ -37,6 +37,33 @@ export const createExercise = async (exerciseFormData: FormData) => {
   return createdExercise;
 };
 
+// TODO: REMOVE ANY FROM ANSWERS
+export const answerExercise = async (exerciseId: number, answers: any) => {
+  const response = await fetch(
+    `http://localhost:3000/questionario/${exerciseId}/resposta`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(answers),
+    }
+  );
+
+  const createdAnswers = await response.json();
+
+  return createdAnswers;
+};
+
+// TODO: REMOVE ANY FROM ANSWERS
+export const getExerciseAnswer = async (exerciseId: number, userId: number) => {
+  const response = await fetch(
+    `http://localhost:3000/questionario/${exerciseId}/respostas?filter.user=${userId}`
+  );
+
+  const exercises = await response.json();
+
+  return exercises.data;
+};
+
 export const updateExercise = async (
   id: string,
   exerciseFormData: FormData

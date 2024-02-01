@@ -38,7 +38,15 @@ export class ExerciseService {
       ],
       filterableColumns: {
         description: [FilterOperator.EQ, FilterSuffix.NOT],
+        id: true,
       },
+    });
+  }
+
+  async find(id: number): Promise<Exercise> {
+    return await this.exerciseRepository.findOne({
+      where: { id },
+      relations: ['questions'],
     });
   }
 

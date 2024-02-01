@@ -23,6 +23,11 @@ export class ExerciseController {
     return this.service.findAll(query);
   }
 
+  @Get('questionario/:id')
+  find(@Param('id') id: string): Promise<Exercise> {
+    return this.service.find(+id);
+  }
+
   @Post('questionario')
   create(@Body() createExerciseDto: CreateExerciseDto): Promise<Exercise> {
     return this.service.create(createExerciseDto);

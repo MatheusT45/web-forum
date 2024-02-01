@@ -61,7 +61,7 @@ export default function LoginPage() {
                 id="password"
                 label="Senha"
                 {...register('password')}
-                placeholder="Password"
+                placeholder="Senha"
                 type="password"
               />
             </Container>

@@ -95,6 +95,7 @@ export default function ExerciseFormComponent({
         await updateExercise(exerciseId, exercise);
         return;
       }
+      exercise.createdBy = 1; // TODO: ADD CPF AS A PARAMETER
       await createExercise(exercise);
     } catch (error) {
       console.error(error);

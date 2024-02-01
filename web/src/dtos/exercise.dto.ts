@@ -6,4 +6,5 @@ export type ExerciseDto = {
   description: string;
   questions: QuestionDto[];
   createdAt: string;
+  createdBy?: number;
 };

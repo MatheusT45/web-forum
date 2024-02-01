@@ -16,20 +16,61 @@ import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { FormEvent, useState } from 'react';
-import { createExercise } from '@/services/exercise.service';
+import { FormEvent, useEffect, useState } from 'react';
+import {
+  createExercise,
+  getExercise,
+  updateExercise,
+} from '@/services/exercise.service';
 import { useRouter } from 'next/navigation';
 
-export default function ExerciseFormComponent() {
+export default function ExerciseFormComponent({
+  exerciseId,
+}: {
+  exerciseId?: string;
+}) {
   const { push } = useRouter();
+  const [exercise, setExercise] = useState({
+    questions: [
+      {
+        description: '',
+      },
+    ],
+  } as any); // TODO: ADD TYPE TO EXERCISE
   const [questionCount, setQuestionCount] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
+  const fetchExercise = async () => {
+    if (!exerciseId) return;
+    const response = await getExercise(+exerciseId);
+    setExercise(response);
+    setQuestionCount(response.questions.length);
+  };
+
+  useEffect(() => {
+    fetchExercise();
+  }, []);
+
   const handleClickNewQuestion = () => {
+    setExercise({
+      ...exercise,
+      questions: [
+        ...exercise.questions,
+        {
+          description: '',
+        },
+      ],
+    });
     setQuestionCount(questionCount + 1);
   };
 
-  const handleClickRemoveQuestion = () => {
+  const handleClickRemoveQuestion = (i: number) => {
+    setExercise({
+      ...exercise,
+      questions: exercise.questions.filter(
+        (_: { description: string }, index: number) => index !== i
+      ),
+    });
     setQuestionCount(questionCount - 1);
   };
 
@@ -50,6 +91,10 @@ export default function ExerciseFormComponent() {
       );
       formData.append('createdBy', '1'); // TODO: ADD CPF AS A PARAMETER
 
+      if (exerciseId) {
+        await updateExercise(exerciseId, formData);
+        return;
+      }
       await createExercise(formData);
     } catch (error) {
       console.error(error);
@@ -85,7 +130,10 @@ export default function ExerciseFormComponent() {
                 id="exercise-name-input"
                 label="Nome"
                 name="name"
-                defaultValue=""
+                value={exercise.name || ''}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setExercise({ ...exercise, name: event.target.value });
+                }}
               />
 
               <TextField
@@ -93,6 +141,10 @@ export default function ExerciseFormComponent() {
                 label="Descrição"
                 name="description"
                 maxRows={4}
+                value={exercise.description || ''}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setExercise({ ...exercise, description: event.target.value });
+                }}
               />
 
               <Typography
@@ -114,11 +166,31 @@ export default function ExerciseFormComponent() {
                     id="question-description-input"
                     label="Descrição"
                     name="question.description"
+                    value={exercise.questions?.[i]?.description || ''}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setExercise({
+                        ...exercise,
+                        questions: exercise.questions.map(
+                          (
+                            question: { description: string },
+                            index: number
+                          ) => {
+                            if (index === i) {
+                              return {
+                                ...question,
+                                description: event.target.value,
+                              };
+                            }
+                            return question;
+                          }
+                        ),
+                      });
+                    }}
                     endAdornment={
                       <InputAdornment position="end">
                         <IconButton
                           aria-label="remove question"
-                          onClick={handleClickRemoveQuestion}
+                          onClick={() => handleClickRemoveQuestion(i)}
                           edge="end"
                         >
                           <RemoveIcon />

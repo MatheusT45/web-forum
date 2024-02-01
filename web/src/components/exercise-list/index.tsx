@@ -69,7 +69,7 @@ export default function ExerciseListComponent() {
   ];
 
   const editExercise = (id: GridRowId) => () => {
-    console.log('edit: ', id);
+    push(`/edit-exercise/${id}`);
   };
 
   const deleteExercise = (id: GridRowId) => async () => {
@@ -91,6 +91,7 @@ export default function ExerciseListComponent() {
     });
     setExercises(paginatedExercises);
   };
+
   useEffect(() => {
     getPaginatedExercises();
   }, []);

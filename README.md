@@ -6,8 +6,8 @@ Running locally
 docker compose up
 ```
 
-TODO: TRATAMENTO DE ERROS
-TODO: VALIDACAO DE CPF
+<!-- TODO: TRATAMENTO DE ERROS -->
+<!-- TODO: VALIDACAO DE CPF -->
 
 ## Próximos passos
 

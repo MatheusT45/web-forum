@@ -1,4 +1,4 @@
-# Web Forum
+# Web Quiz
 
 Running locally
 

@@ -26,7 +26,7 @@ export class ExerciseService {
       relations: ['questions'],
       sortableColumns: ['id', 'name', 'description'],
       nullSort: 'last',
-      defaultSortBy: [['id', 'DESC']],
+      defaultSortBy: [['id', 'ASC']],
       searchableColumns: ['name', 'description'],
       select: [
         'id',

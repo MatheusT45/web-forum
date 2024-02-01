@@ -22,7 +22,7 @@ export class QuestionService {
     return paginate(query, this.repository, {
       sortableColumns: ['id', 'description'],
       nullSort: 'last',
-      defaultSortBy: [['id', 'DESC']],
+      defaultSortBy: [['id', 'ASC']],
       searchableColumns: ['description'],
       select: ['id', 'description', 'createdAt', 'updatedAt'],
       filterableColumns: {

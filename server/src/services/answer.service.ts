@@ -29,7 +29,7 @@ export class AnswerService {
       relations: ['question', 'user'],
       sortableColumns: ['id', 'description'],
       nullSort: 'last',
-      defaultSortBy: [['id', 'DESC']],
+      defaultSortBy: [['id', 'ASC']],
       searchableColumns: ['description'],
       select: [
         'id',
@@ -43,6 +43,8 @@ export class AnswerService {
       ],
       filterableColumns: {
         description: [FilterOperator.EQ, FilterSuffix.NOT],
+        id: true,
+        user: true,
       },
       where: { question: { exercise: { id: exerciseId } } },
     });

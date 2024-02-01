@@ -23,7 +23,7 @@ export class UserService {
     return paginate(query, this.repository, {
       sortableColumns: ['id', 'name', 'cpf'],
       nullSort: 'last',
-      defaultSortBy: [['id', 'DESC']],
+      defaultSortBy: [['id', 'ASC']],
       searchableColumns: ['name', 'cpf'],
       select: ['id', 'name', 'cpf', 'createdAt', 'updatedAt'],
       filterableColumns: {

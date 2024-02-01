@@ -2,7 +2,7 @@
 
 Olá, esse foi um desafio para criar um sistema de questionários com base no seguinte diagrama:
 
-![Alt text](assets/image.png)
+![Alt text](assets/diagrama.png)
 
 Para realizar o desafio, utilizei o NestJs com PostgreSQL para fazer a API e Nextjs no frontend.
 

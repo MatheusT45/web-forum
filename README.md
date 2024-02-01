@@ -12,3 +12,4 @@ docker compose up
 ## Próximos passos
 
 - Adicionar um WYSIWYG para o campo de enunciado das perguntas
+- Adicionar autenticação (JWT)

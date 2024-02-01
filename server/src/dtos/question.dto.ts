@@ -1,3 +1,3 @@
-export class CreateQuestionDto {
+export class QuestionDto {
   readonly description: string;
 }

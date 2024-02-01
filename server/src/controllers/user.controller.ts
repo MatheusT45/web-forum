@@ -10,9 +10,8 @@ import {
 } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { User } from 'src/entities/user.entity';
-import { CreateUserDto } from 'src/dto/user/create-user.dto';
-import { UpdateUserDto } from 'src/dto/user/update-user.dto';
 import { Paginate, PaginateQuery, Paginated } from 'nestjs-paginate';
+import { UserDto } from 'src/dtos/user.dto';
 
 @Controller()
 export class UserController {
@@ -24,21 +23,21 @@ export class UserController {
   }
 
   @Post('usuario')
-  create(@Body() createUserDto: CreateUserDto): Promise<User> {
+  create(@Body() createUserDto: UserDto): Promise<User> {
     return this.service.create(createUserDto);
   }
 
   @Patch('usuario/:id')
   updatePatch(
     @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() updateUserDto: Partial<UserDto>,
   ): Promise<User> {
     return this.service.patch(+id, updateUserDto);
   }
 
   @Put('usuario/:id')
   updatePut(
-    @Body() updateUserDto: CreateUserDto,
+    @Body() updateUserDto: UserDto,
     @Param('id') id?: string,
   ): Promise<User> {
     return this.service.put(updateUserDto, +id);

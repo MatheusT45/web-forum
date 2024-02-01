@@ -1,8 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Answer } from '../entities/answer.entity';
-import { CreateAnswerDto } from 'src/dto/answer/create-answer.dto';
-import { UpdateAnswerDto } from 'src/dto/answer/update-answer.dto';
 import {
   FilterOperator,
   FilterSuffix,
@@ -11,6 +9,7 @@ import {
   paginate,
 } from 'nestjs-paginate';
 import { Question } from 'src/entities/question.entity';
+import { AnswerDto } from 'src/dtos/answer.dto';
 
 @Injectable()
 export class AnswerService {
@@ -52,7 +51,7 @@ export class AnswerService {
 
   async create(
     exerciseId: number,
-    createAnswerDto: CreateAnswerDto[],
+    createAnswerDto: AnswerDto[],
   ): Promise<Answer[]> {
     const answers = [];
     for (const answer of createAnswerDto) {
@@ -74,7 +73,7 @@ export class AnswerService {
   async update(
     exerciseId: number,
     answerId: number,
-    updateAnswerDto: UpdateAnswerDto,
+    updateAnswerDto: Partial<AnswerDto>,
   ): Promise<Answer> {
     const question = await this.questionRepository.findOne({
       where: { id: updateAnswerDto.questionId },

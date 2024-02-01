@@ -9,10 +9,9 @@ import {
   Put,
 } from '@nestjs/common';
 import { ExerciseService } from '../services/exercise.service';
-import { Exercise } from 'src/entities/exercise.entity';
-import { CreateExerciseDto } from 'src/dto/exercise/create-exercise.dto';
-import { UpdateExerciseDto } from 'src/dto/exercise/update-exercise.dto';
 import { Paginate, PaginateQuery, Paginated } from 'nestjs-paginate';
+import { Exercise } from '../entities/exercise.entity';
+import { ExerciseDto } from '../dtos/exercise.dto';
 
 @Controller()
 export class ExerciseController {
@@ -29,21 +28,21 @@ export class ExerciseController {
   }
 
   @Post('questionario')
-  create(@Body() createExerciseDto: CreateExerciseDto): Promise<Exercise> {
+  create(@Body() createExerciseDto: ExerciseDto): Promise<Exercise> {
     return this.service.create(createExerciseDto);
   }
 
   @Patch('questionario/:id')
   updatePatch(
     @Param('id') id: string,
-    @Body() updateExerciseDto: UpdateExerciseDto,
+    @Body() updateExerciseDto: Partial<ExerciseDto>,
   ): Promise<Exercise> {
     return this.service.patch(+id, updateExerciseDto);
   }
 
   @Put('questionario/:id')
   updatePut(
-    @Body() updateExerciseDto: CreateExerciseDto,
+    @Body() updateExerciseDto: ExerciseDto,
     @Param('id') id?: string,
   ): Promise<Exercise> {
     return this.service.put(updateExerciseDto, +id);

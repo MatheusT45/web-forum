@@ -1,8 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Exercise } from '../entities/exercise.entity';
-import { CreateExerciseDto } from 'src/dto/exercise/create-exercise.dto';
-import { UpdateExerciseDto } from 'src/dto/exercise/update-exercise.dto';
 import {
   FilterOperator,
   FilterSuffix,
@@ -10,7 +8,8 @@ import {
   Paginated,
   paginate,
 } from 'nestjs-paginate';
-import { Question } from 'src/entities/question.entity';
+import { Question } from '../entities/question.entity';
+import { ExerciseDto } from '../dtos/exercise.dto';
 
 @Injectable()
 export class ExerciseService {
@@ -51,7 +50,7 @@ export class ExerciseService {
     });
   }
 
-  async create(createExerciseDto: CreateExerciseDto): Promise<Exercise> {
+  async create(createExerciseDto: ExerciseDto): Promise<Exercise> {
     const exercise = this.exerciseRepository.create(createExerciseDto);
 
     const createdQuestions = await this.questionRepository.save(
@@ -70,7 +69,7 @@ export class ExerciseService {
 
   async patch(
     id: number,
-    updateExerciseDto: UpdateExerciseDto,
+    updateExerciseDto: Partial<ExerciseDto>,
   ): Promise<Exercise> {
     const { questions } = updateExerciseDto;
 
@@ -90,10 +89,7 @@ export class ExerciseService {
     });
   }
 
-  async put(
-    updateExerciseDto: CreateExerciseDto,
-    id?: number,
-  ): Promise<Exercise> {
+  async put(updateExerciseDto: ExerciseDto, id?: number): Promise<Exercise> {
     const { questions, ...exercise } = updateExerciseDto;
 
     const exerciseToUpdate = this.exerciseRepository.create({

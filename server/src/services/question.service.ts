@@ -1,8 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Question } from '../entities/question.entity';
-import { CreateQuestionDto } from 'src/dto/question/create-question.dto';
-import { UpdateQuestionDto } from 'src/dto/question/update-question.dto';
+import { QuestionDto } from 'src/dtos/question.dto';
 import {
   FilterOperator,
   FilterSuffix,
@@ -31,13 +30,13 @@ export class QuestionService {
     });
   }
 
-  async create(createQuestionDto: CreateQuestionDto): Promise<Question> {
+  async create(createQuestionDto: QuestionDto): Promise<Question> {
     return await this.repository.save(createQuestionDto);
   }
 
   async update(
     id: number,
-    updateQuestionDto: UpdateQuestionDto,
+    updateQuestionDto: Partial<QuestionDto>,
   ): Promise<Question> {
     const { affected } = await this.repository.update(id, updateQuestionDto);
     if (affected > 0) {

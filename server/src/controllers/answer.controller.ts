@@ -9,8 +9,7 @@ import {
 } from '@nestjs/common';
 import { AnswerService } from '../services/answer.service';
 import { Answer } from 'src/entities/answer.entity';
-import { CreateAnswerDto } from 'src/dto/answer/create-answer.dto';
-import { UpdateAnswerDto } from 'src/dto/answer/update-answer.dto';
+import { AnswerDto } from 'src/dtos/answer.dto';
 import { Paginate, PaginateQuery, Paginated } from 'nestjs-paginate';
 
 @Controller()
@@ -28,7 +27,7 @@ export class AnswerController {
   @Post('questionario/:exerciseId/resposta')
   create(
     @Param('exerciseId') exerciseId: string,
-    @Body() createAnswerDto: CreateAnswerDto[],
+    @Body() createAnswerDto: AnswerDto[],
   ): Promise<Answer[]> {
     return this.service.create(+exerciseId, createAnswerDto);
   }
@@ -37,7 +36,7 @@ export class AnswerController {
   update(
     @Param('exerciseId') exerciseId: string,
     @Param('answerId') answerId: string,
-    @Body() updateAnswerDto: UpdateAnswerDto,
+    @Body() updateAnswerDto: Partial<AnswerDto>,
   ): Promise<Answer> {
     return this.service.update(+exerciseId, +answerId, updateAnswerDto);
   }

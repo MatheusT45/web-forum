@@ -1,8 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
-import { CreateUserDto } from 'src/dto/user/create-user.dto';
-import { UpdateUserDto } from 'src/dto/user/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import {
   FilterOperator,
@@ -11,6 +9,7 @@ import {
   Paginated,
   paginate,
 } from 'nestjs-paginate';
+import { UserDto } from 'src/dtos/user.dto';
 
 @Injectable()
 export class UserService {
@@ -32,14 +31,14 @@ export class UserService {
     });
   }
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: UserDto): Promise<User> {
     const salt = await bcrypt.genSalt();
     const hash = await bcrypt.hash(createUserDto.password, salt);
 
     return await this.repository.save({ ...createUserDto, password: hash });
   }
 
-  async patch(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+  async patch(id: number, updateUserDto: Partial<UserDto>): Promise<User> {
     const { affected } = await this.repository.update(id, updateUserDto);
     if (affected > 0) {
       return this.repository.findOne({ where: { id } });
@@ -47,7 +46,7 @@ export class UserService {
     throw new Error('Usuário não encontrado');
   }
 
-  async put(updateUserDto: CreateUserDto, id?: number): Promise<User> {
+  async put(updateUserDto: UserDto, id?: number): Promise<User> {
     this.repository.create({ ...updateUserDto, id });
 
     return await this.repository.save({ ...updateUserDto, id });

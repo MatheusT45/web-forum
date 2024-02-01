@@ -21,6 +21,8 @@ import Snackbar from '@mui/material/Snackbar';
 import { ExerciseDto } from '@/dtos/exercise.dto';
 import { AnswerDto } from '@/dtos/answer.dto';
 import { QuestionDto } from '@/dtos/question.dto';
+import { useAtom } from 'jotai';
+import { userAtom } from '@/store/user.store';
 
 export default function ExerciseAnswerFormComponent({
   exerciseId,
@@ -39,11 +41,12 @@ export default function ExerciseAnswerFormComponent({
   const [isLoading, setIsLoading] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [previouslyAnswered, setPreviouslyAnswered] = useState(false);
+  const [userId, setUserId] = useAtom(userAtom);
 
   const fetchExercise = async () => {
-    if (!exerciseId) return;
+    if (!exerciseId || !userId) return;
     const exerciseResponse = await getExercise(+exerciseId);
-    const answerResponse = await getExerciseAnswers(+exerciseId, 1); // TODO: ADD CPF AS A PARAMETER
+    const answerResponse = await getExerciseAnswers(+exerciseId, userId);
 
     if (answerResponse.length > 0) {
       setOpenSnackbar(true);
@@ -70,7 +73,7 @@ export default function ExerciseAnswerFormComponent({
     data.answers = Object.keys(data).map((key) => {
       if (!data[key]) return;
 
-      data[key].user = 1; // TODO: ADD CPF AS A PARAMETER
+      data[key].user = userId || 0;
       return data[key];
     });
 

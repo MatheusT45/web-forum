@@ -1,12 +1,5 @@
 import { AnswerDto } from '@/dtos/answer.dto';
 import { ExerciseDto } from '@/dtos/exercise.dto';
-import { ExerciseModel } from '@/models/exercise.model';
-
-type CreateExerciseDto = {
-  name: string;
-  description: string;
-  questions: { description: string }[];
-};
 
 export const getExercises = async (): Promise<ExerciseDto[]> => {
   const response = await fetch('http://localhost:3000/questionarios');
@@ -81,7 +74,7 @@ export const answerExercise = async (
 
 export const getExerciseAnswers = async (
   exerciseId: number,
-  userId: number
+  userId: string
 ): Promise<AnswerDto[]> => {
   const response = await fetch(
     `http://localhost:3000/questionario/${exerciseId}/respostas?filter.user=${userId}`

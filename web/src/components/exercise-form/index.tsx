@@ -25,6 +25,8 @@ import {
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { ExerciseDto } from '@/dtos/exercise.dto';
+import { useAtom } from 'jotai';
+import { userAtom } from '@/store/user.store';
 
 export default function ExerciseFormComponent({
   exerciseId,
@@ -45,6 +47,7 @@ export default function ExerciseFormComponent({
   });
   const [questionCount, setQuestionCount] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [userId, setUserId] = useAtom(userAtom);
 
   const fetchExercise = async () => {
     if (!exerciseId) return;
@@ -95,7 +98,8 @@ export default function ExerciseFormComponent({
         await updateExercise(exerciseId, exercise);
         return;
       }
-      exercise.createdBy = 1; // TODO: ADD CPF AS A PARAMETER
+      if (!userId) return;
+      exercise.createdBy = +userId;
       await createExercise(exercise);
     } catch (error) {
       console.error(error);

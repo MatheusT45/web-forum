@@ -23,7 +23,7 @@ export class ExerciseService {
 
   public findAll(query: PaginateQuery): Promise<Paginated<Exercise>> {
     return paginate(query, this.exerciseRepository, {
-      relations: ['questions'],
+      relations: ['questions', 'createdBy'],
       sortableColumns: ['id', 'name', 'description'],
       nullSort: 'last',
       defaultSortBy: [['id', 'ASC']],
@@ -33,6 +33,7 @@ export class ExerciseService {
         'name',
         'questions.id',
         'questions.description',
+        'createdBy.id',
         'description',
         'createdAt',
       ],

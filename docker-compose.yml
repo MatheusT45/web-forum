@@ -16,8 +16,8 @@ services:
     volumes:
       - ./server/:/app/
       # - server_node_modules:/app/node_modules
-    # networks:
-    #   - forum
+    networks:
+      - quiz
     links:
       - db
     depends_on:
@@ -27,7 +27,7 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_DB: forum
+      POSTGRES_DB: quiz
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       PGDATA: /var/lib/postgresql/data/pgdata
@@ -35,8 +35,8 @@ services:
       - 5432:5432
     volumes:
       - postgres_local_data:/var/lib/postgresql/data
-    # networks:
-    #   - forum
+    networks:
+      - quiz
 
   adminer:
     image: adminer
@@ -44,19 +44,20 @@ services:
     ports:
       - 8080:8080
 
-  # web:
-  #   container_name: web
-  #   restart: always
-  #   build: ./web
-  #   command: sh -c "npm run dev"
-  #   ports:
-  #     - 8000:8000
-  #   working_dir: /app
-  #   volumes:
-  #     - ./web/:/app
-  #     - web_node_modules:/app/node_modules
-  #   networks:
-  #     - forum
-# networks:
-#   forum:
-#     driver: bridge
+  web:
+    container_name: web
+    restart: always
+    build: ./web
+    command: sh -c "npm run dev"
+    ports:
+      - 3001:3001
+    working_dir: /app
+    volumes:
+      - ./web/:/app
+      # - web_node_modules:/app/node_modules
+    networks:
+      - quiz
+
+networks:
+  quiz:
+    driver: bridge

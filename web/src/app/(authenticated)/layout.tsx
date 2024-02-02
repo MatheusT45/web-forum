@@ -15,7 +15,6 @@ export default function AuthLayout({
 
   useEffect(() => {
     if (!userId) {
-      console.log('LAYOUT');
       push('/login');
     }
   }, []);

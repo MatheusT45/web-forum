@@ -79,19 +79,6 @@ export default function ExerciseListComponent() {
     },
   ];
 
-  const answerExercise = (id: GridRowId) => () => {
-    push(`/answer-exercise/${id}`);
-  };
-
-  const editExercise = (id: GridRowId) => () => {
-    push(`/edit-exercise/${id}`);
-  };
-
-  const deleteExercise = (id: GridRowId) => async () => {
-    await deleteExerciseRequest(id.toString());
-    await getPaginatedExercises();
-  };
-
   const { push } = useRouter();
   const [exercises, setExercises] = useState<ExerciseModel[]>([]);
 
@@ -113,9 +100,22 @@ export default function ExerciseListComponent() {
     getPaginatedExercises();
   }, []);
 
-  function handleCreateExerciseRedirect() {
+  const handleCreateExerciseRedirect = () => {
     push('/create-exercise');
-  }
+  };
+
+  const answerExercise = (id: GridRowId) => async () => {
+    push(`/answer-exercise/${id}`);
+  };
+
+  const editExercise = (id: GridRowId) => async () => {
+    push(`/edit-exercise/${id}`);
+  };
+
+  const deleteExercise = (id: GridRowId) => async () => {
+    await deleteExerciseRequest(id.toString());
+    await getPaginatedExercises();
+  };
 
   return (
     <Box sx={{ flexGrow: 1, margin: '3rem', width: '100%' }}>

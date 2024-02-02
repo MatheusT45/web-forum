@@ -22,6 +22,8 @@ Frontend: `http://localhost:3001/`
 API: `http://localhost:3000/`
 Documentação da API: `http://localhost:3000/api`
 
+Como utilizei a configuração [`synchronize: true`](https://github.com/MatheusT45/web-quiz/blob/1783d6c5dea897fbb449d1720c18a18956ba86ff/server/src/database/database.provider.ts#L15), não foi preciso gerar migrations para o banco de dados, assim que a API é montada, o banco é estruturado, é esperado que essa configuração seja alterada para o ambiente de produção e as migrations sejam geradas.
+
 ## Próximos passos
 
 - Adicionar um WYSIWYG para os campos de descrição das perguntas e respostas;
@@ -30,4 +32,5 @@ Documentação da API: `http://localhost:3000/api`
 - Fixtures para popular a base de dados;
 - Validações de CPF;
 - Tratamento de erros da API;
-- Integrar com o GCP.
+- Integrar com o GCP;
+- Implementar testes unitários.
